@@ -1,0 +1,556 @@
+[
+    {
+        "id": "4ab4cfe74fe488f7",
+        "type": "tab",
+        "label": "Fluxo 1",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "1fa0b77ddf9e0321",
+        "type": "inject",
+        "z": "4ab4cfe74fe488f7",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": "5",
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 140,
+        "y": 1160,
+        "wires": [
+            [
+                "fc161e9e52710107"
+            ]
+        ]
+    },
+    {
+        "id": "fc161e9e52710107",
+        "type": "postgresql",
+        "z": "4ab4cfe74fe488f7",
+        "name": "Criar alertas",
+        "query": "\n-- Criar alertas apenas para situações de risk_level ALTO.\n\nINSERT INTO alerts (\n    location_name,\n    risk_level,\n    message,\n    observation_id\n)\n\nSELECT\n    observations.location_name,\n    'ALTO',\n    COALESCE(observations.risk_reason, 'ALTO'),\n    observations.id\n\nFROM observations\n\n-- Considerar apenas observações das últimas 3 horas.\nWHERE UPPER(TRIM(observations.risk_level)) = 'ALTO'\n  AND observations.observed_at >= NOW() - INTERVAL '3 hours'\n\n-- Não criar outro alerta para a mesma observação.\n  AND NOT EXISTS (\n      SELECT 1\n      FROM alerts\n      WHERE alerts.observation_id = observations.id\n  )\n\n-- Evitar duplicados se já existir uma restrição UNIQUE.\nON CONFLICT (observation_id) DO NOTHING;\n",
+        "postgreSQLConfig": "5db496b19976d9a2",
+        "split": false,
+        "rowsPerMsg": 1,
+        "outputs": 1,
+        "x": 410,
+        "y": 1160,
+        "wires": [
+            [
+                "019c1e18b2cccef3"
+            ]
+        ]
+    },
+    {
+        "id": "019c1e18b2cccef3",
+        "type": "postgresql",
+        "z": "4ab4cfe74fe488f7",
+        "name": "Obter pendentes",
+        "query": "\n\nSELECT\n    alerts.id,\n    alerts.location_name,\n    alerts.risk_level,\n    alerts.message,\n    alerts.created_at,\n    observations.observed_at,\n    observations.wave_height_m,\n    observations.wave_period_s,\n    observations.ipma_warning_level,\n    observations.risk_reason,\n    observations.source\n\nFROM alerts\n\nLEFT JOIN observations\n    ON observations.id = alerts.observation_id\n\nWHERE UPPER(TRIM(alerts.risk_level)) = 'ALTO'\n  AND alerts.email_sent = FALSE\n  AND alerts.email_attempts < 5\n\nORDER BY alerts.created_at ASC\n\nLIMIT 20;\n",
+        "postgreSQLConfig": "5db496b19976d9a2",
+        "split": false,
+        "rowsPerMsg": 1,
+        "outputs": 1,
+        "x": 690,
+        "y": 1160,
+        "wires": [
+            [
+                "71de44a38bb57c2a"
+            ]
+        ]
+    },
+    {
+        "id": "71de44a38bb57c2a",
+        "type": "split",
+        "z": "4ab4cfe74fe488f7",
+        "name": "",
+        "splt": "\\n",
+        "spltType": "str",
+        "arraySplt": 1,
+        "arraySpltType": "len",
+        "stream": false,
+        "addname": "",
+        "property": "payload",
+        "x": 930,
+        "y": 1160,
+        "wires": [
+            [
+                "82694dae36379122"
+            ]
+        ]
+    },
+    {
+        "id": "82694dae36379122",
+        "type": "function",
+        "z": "4ab4cfe74fe488f7",
+        "name": "Preparar email",
+        "func": "\nconst alerta = msg.payload;\n\nfunction formatarData(data) {\n    if (!data) return 'Não disponível';\n\n    const dataFormatada = new Date(data);\n\n    if (Number.isNaN(dataFormatada.getTime())) {\n        return 'Não disponível';\n    }\n\n    return dataFormatada.toLocaleString('pt-PT', {\n        timeZone: 'Europe/Lisbon',\n        dateStyle: 'short',\n        timeStyle: 'medium'\n    });\n}\n\nfunction formatarNumero(valor, unidade) {\n    if (valor === null || valor === undefined || valor === '') {\n        return 'Não disponível';\n    }\n\n    return `${Number(valor).toFixed(1)} ${unidade}`;\n}\n\nfunction escaparHTML(valor) {\n    return String(valor ?? 'Não disponível')\n        .replace(/&/g, '&amp;')\n        .replace(/</g, '&lt;')\n        .replace(/>/g, '&gt;')\n        .replace(/\"/g, '&quot;')\n        .replace(/'/g, '&#39;');\n}\n\nconst local = alerta.location_name;\nconst motivo = alerta.risk_reason || alerta.message || 'Risco ALTO identificado';\nconst avisoIPMA = alerta.ipma_warning_level\n    ? alerta.ipma_warning_level\n    : 'Sem informação IPMA associada';\n\nmsg.alertId = alerta.id;\nmsg.topic = `ALERTA DE RISCO ALTO - ${local}`;\n\n// Email em texto simples\nmsg.payload =\n`ALERTA DE RISCO COSTEIRO -  ALTO\n\nLocal: ${local}\nNível de risco: ALTO\nMotivo: ${motivo}\n\nDados marítimos:\n- Data da observação: ${formatarData(alerta.observed_at)}\n- Altura das ondas: ${formatarNumero(alerta.wave_height_m, 'm')}\n- Período das ondas: ${formatarNumero(alerta.wave_period_s, 's')}\n\nInformação IPMA: ${avisoIPMA}\nFonte dos dados: ${alerta.source || 'Não disponível'}\n\nAlerta criado em: ${formatarData(alerta.created_at)}\n\nEsta mensagem é um alerta automático do projeto de monitorização marítima.`;\n\n// Email em HTML\nmsg.html = `\n<div style=\"font-family:Arial,sans-serif;max-width:600px;color:#222\">\n  <h2 style=\"color:#b00020\">ALERTA DE RISCO COSTEIRO - ALTO</h2>\n\n  <p><strong>Local:</strong> ${escaparHTML(local)}</p>\n  <p><strong>Motivo:</strong> ${escaparHTML(motivo)}</p>\n\n  <h3>Dados marítimos</h3>\n  <ul>\n    <li><strong>Data da observação:</strong> ${formatarData(alerta.observed_at)}</li>\n    <li><strong>Altura das ondas:</strong> ${formatarNumero(alerta.wave_height_m, 'm')}</li>\n    <li><strong>Período das ondas:</strong> ${formatarNumero(alerta.wave_period_s, 's')}</li>\n  </ul>\n\n  <h3>Informação complementar</h3>\n  <p><strong>Aviso IPMA:</strong> ${escaparHTML(avisoIPMA)}</p>\n  <p><strong>Fonte:</strong> ${escaparHTML(alerta.source || 'Não disponível')}</p>\n  <p><strong>Alerta criado em:</strong> ${formatarData(alerta.created_at)}</p>\n\n  <hr>\n  <p style=\"font-size:12px;color:#666\">\n    Mensagem automática do projeto de monitorização marítima.\n    Os dados apresentados devem ser interpretados tendo em conta a respetiva fonte.\n  </p>\n</div>`;\n\nreturn msg;\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 160,
+        "y": 1240,
+        "wires": [
+            [
+                "21734292e24991c5"
+            ]
+        ]
+    },
+    {
+        "id": "21734292e24991c5",
+        "type": "delay",
+        "z": "4ab4cfe74fe488f7",
+        "name": "",
+        "pauseType": "rate",
+        "timeout": "5",
+        "timeoutUnits": "seconds",
+        "rate": "1",
+        "nbRateUnits": "5",
+        "rateUnits": "second",
+        "randomFirst": "1",
+        "randomLast": "5",
+        "randomUnits": "seconds",
+        "drop": false,
+        "allowrate": false,
+        "outputs": 1,
+        "x": 400,
+        "y": 1240,
+        "wires": [
+            [
+                "728d7e8f7853bd92"
+            ]
+        ]
+    },
+    {
+        "id": "728d7e8f7853bd92",
+        "type": "e-mail",
+        "z": "4ab4cfe74fe488f7",
+        "server": "costeiro-mail",
+        "port": "1025",
+        "authtype": "NONE",
+        "saslformat": true,
+        "token": "oauth2Response.access_token",
+        "secure": false,
+        "tls": false,
+        "name": "IPMA@upca.pt",
+        "dname": "IPMA UPCA",
+        "x": 650,
+        "y": 1240,
+        "wires": []
+    },
+    {
+        "id": "05647a6a4a8e842b",
+        "type": "function",
+        "z": "4ab4cfe74fe488f7",
+        "name": "Preparar atualização",
+        "func": "msg.params = [msg.alertId];\nmsg.query = `UPDATE alerts\n             SET email_sent = TRUE,\n                 email_sent_at = NOW(),\n                 last_error = NULL\n             WHERE id = $1\n               AND email_sent = FALSE\n               AND UPPER(TRIM(risk_level)) = 'ALTO'\n             RETURNING id, email_sent, email_sent_at;`;\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 400,
+        "y": 1440,
+        "wires": [
+            [
+                "99679feada6e1ec3"
+            ]
+        ]
+    },
+    {
+        "id": "99679feada6e1ec3",
+        "type": "postgresql",
+        "z": "4ab4cfe74fe488f7",
+        "name": "",
+        "query": "",
+        "postgreSQLConfig": "5db496b19976d9a2",
+        "split": false,
+        "rowsPerMsg": 1,
+        "outputs": 1,
+        "x": 610,
+        "y": 1360,
+        "wires": [
+            [
+                "4a542112c88b70c5"
+            ]
+        ]
+    },
+    {
+        "id": "4a542112c88b70c5",
+        "type": "debug",
+        "z": "4ab4cfe74fe488f7",
+        "name": "debug 2",
+        "active": true,
+        "tosidebar": true,
+        "console": true,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 850,
+        "y": 1360,
+        "wires": []
+    },
+    {
+        "id": "8b22043d37a2f810",
+        "type": "catch",
+        "z": "4ab4cfe74fe488f7",
+        "name": "",
+        "scope": [
+            "728d7e8f7853bd92"
+        ],
+        "uncaught": false,
+        "x": 120,
+        "y": 1320,
+        "wires": [
+            [
+                "478d15ff35bc7888"
+            ]
+        ]
+    },
+    {
+        "id": "93cd8d238b207555",
+        "type": "complete",
+        "z": "4ab4cfe74fe488f7",
+        "name": "",
+        "scope": [
+            "728d7e8f7853bd92"
+        ],
+        "uncaught": false,
+        "x": 130,
+        "y": 1400,
+        "wires": [
+            [
+                "05647a6a4a8e842b"
+            ]
+        ]
+    },
+    {
+        "id": "478d15ff35bc7888",
+        "type": "function",
+        "z": "4ab4cfe74fe488f7",
+        "name": "function 1",
+        "func": "const erro = (msg.error && msg.error.message) ? msg.error.message : 'erro desconhecido';\nmsg.params = [msg.alertId, erro.slice(0, 500)];\nmsg.query  = `UPDATE alerts\n              SET email_attempts = email_attempts + 1, last_error = $2\n              WHERE id = $1\n              RETURNING id, email_attempts, last_error;`;\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 340,
+        "y": 1320,
+        "wires": [
+            [
+                "99679feada6e1ec3"
+            ]
+        ]
+    },
+    {
+        "id": "11349933c0df24d9",
+        "type": "inject",
+        "z": "4ab4cfe74fe488f7",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": "5",
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 160,
+        "y": 1840,
+        "wires": [
+            [
+                "68abf23249c2949b"
+            ]
+        ]
+    },
+    {
+        "id": "68abf23249c2949b",
+        "type": "postgresql",
+        "z": "4ab4cfe74fe488f7",
+        "name": "Criar alertas",
+        "query": "\n-- Criar alertas apenas para situações de risk_level ALTO.\n\nINSERT INTO alerts (\n    location_name,\n    risk_level,\n    message,\n    observation_id\n)\n\nSELECT\n    observations.location_name,\n    'ALTO',\n    COALESCE(observations.risk_reason, 'ALTO'),\n    observations.id\n\nFROM observations\n\n-- Considerar apenas observações das últimas 3 horas.\nWHERE UPPER(TRIM(observations.risk_level)) = 'ALTO'\n  AND observations.observed_at >= NOW() - INTERVAL '3 hours'\n\n-- Não criar outro alerta para a mesma observação.\n  AND NOT EXISTS (\n      SELECT 1\n      FROM alerts\n      WHERE alerts.observation_id = observations.id\n  )\n\n-- Evitar duplicados se já existir uma restrição UNIQUE.\nON CONFLICT (observation_id) DO NOTHING;\n",
+        "postgreSQLConfig": "5db496b19976d9a2",
+        "split": false,
+        "rowsPerMsg": 1,
+        "outputs": 1,
+        "x": 450,
+        "y": 1840,
+        "wires": [
+            [
+                "97c795ac62ae29a9"
+            ]
+        ]
+    },
+    {
+        "id": "97c795ac62ae29a9",
+        "type": "postgresql",
+        "z": "4ab4cfe74fe488f7",
+        "name": "Obter pendentes",
+        "query": "SELECT\n    a.id AS alerta_id,\n    a.location_name,\n    a.created_at,\n    a.risk_level,\n    a.message,\n    a.email_sent,\n\n    o.observed_at,\n    o.wave_height_m,\n    o.wave_period_s,\n    o.ipma_warning_level,\n    o.risk_reason,\n    o.source,\n\n    i.titulo AS ipma_titulo,\n    i.descricao AS ipma_descricao,\n    i.ligacao AS ipma_ligacao,\n    i.data_publicacao AS ipma_data_publicacao,\n    i.fonte AS ipma_fonte\n\nFROM public.alerts AS a\n\nLEFT JOIN LATERAL (\n    SELECT\n        obs.observed_at,\n        obs.wave_height_m,\n        obs.wave_period_s,\n        obs.ipma_warning_level,\n        obs.risk_reason,\n        obs.source\n    FROM public.observations AS obs\n    WHERE obs.location_name = a.location_name\n      AND obs.observed_at <= a.created_at\n    ORDER BY obs.observed_at DESC\n    LIMIT 1\n) AS o ON TRUE\n\nLEFT JOIN LATERAL (\n    SELECT\n        c.titulo,\n        c.descricao,\n        c.ligacao,\n        c.data_publicacao,\n        c.fonte\n    FROM public.ipma_comunicados AS c\n    ORDER BY\n        c.data_publicacao DESC NULLS LAST,\n        c.importado_em DESC\n    LIMIT 1\n) AS i ON TRUE\n\nWHERE a.email_sent = FALSE\n\nORDER BY a.created_at ASC;",
+        "postgreSQLConfig": "5db496b19976d9a2",
+        "split": false,
+        "rowsPerMsg": 1,
+        "outputs": 1,
+        "x": 710,
+        "y": 1840,
+        "wires": [
+            [
+                "e84090e6e8758c99"
+            ]
+        ]
+    },
+    {
+        "id": "e84090e6e8758c99",
+        "type": "split",
+        "z": "4ab4cfe74fe488f7",
+        "name": "",
+        "splt": "\\n",
+        "spltType": "str",
+        "arraySplt": 1,
+        "arraySpltType": "len",
+        "stream": false,
+        "addname": "",
+        "property": "payload",
+        "x": 950,
+        "y": 1840,
+        "wires": [
+            [
+                "ab0ac33603943963"
+            ]
+        ]
+    },
+    {
+        "id": "ab0ac33603943963",
+        "type": "function",
+        "z": "4ab4cfe74fe488f7",
+        "name": "Preparar email",
+        "func": "\nconst alerta = msg.payload;\n\nfunction formatarData(data) {\n    if (!data) return 'Não disponível';\n\n    const dataFormatada = new Date(data);\n\n    if (Number.isNaN(dataFormatada.getTime())) {\n        return 'Não disponível';\n    }\n\n    return dataFormatada.toLocaleString('pt-PT', {\n        timeZone: 'Europe/Lisbon',\n        dateStyle: 'short',\n        timeStyle: 'medium'\n    });\n}\n\nfunction formatarNumero(valor, unidade) {\n    if (valor === null || valor === undefined || valor === '') {\n        return 'Não disponível';\n    }\n\n    return `${Number(valor).toFixed(1)} ${unidade}`;\n}\n\nfunction escaparHTML(valor) {\n    return String(valor ?? 'Não disponível')\n        .replace(/&/g, '&amp;')\n        .replace(/</g, '&lt;')\n        .replace(/>/g, '&gt;')\n        .replace(/\"/g, '&quot;')\n        .replace(/'/g, '&#39;');\n}\n\nconst local = alerta.location_name;\nconst motivo = alerta.risk_reason || alerta.message || 'Risco ALTO identificado';\nconst avisoIPMA = alerta.ipma_warning_level\n    ? alerta.ipma_warning_level\n    : 'Sem informação IPMA associada';\n\nmsg.alertId = alerta.id;\nmsg.topic = `ALERTA DE RISCO ALTO - ${local}`;\n\n// Email em texto simples\nmsg.payload =\n`ALERTA DE RISCO COSTEIRO -  ALTO\n\nLocal: ${local}\nNível de risco: ALTO\nMotivo: ${motivo}\n\nDados marítimos:\n- Data da observação: ${formatarData(alerta.observed_at)}\n- Altura das ondas: ${formatarNumero(alerta.wave_height_m, 'm')}\n- Período das ondas: ${formatarNumero(alerta.wave_period_s, 's')}\n\nInformação IPMA: ${avisoIPMA}\nFonte dos dados: ${alerta.source || 'Não disponível'}\n\nAlerta criado em: ${formatarData(alerta.created_at)}\n\nEsta mensagem é um alerta automático do projeto de monitorização marítima.`;\n\n// Email em HTML\nmsg.html = `\n<div style=\"font-family:Arial,sans-serif;max-width:600px;color:#222\">\n  <h2 style=\"color:#b00020\">ALERTA DE RISCO COSTEIRO - ALTO</h2>\n\n  <p><strong>Local:</strong> ${escaparHTML(local)}</p>\n  <p><strong>Motivo:</strong> ${escaparHTML(motivo)}</p>\n\n  <h3>Dados marítimos</h3>\n  <ul>\n    <li><strong>Data da observação:</strong> ${formatarData(alerta.observed_at)}</li>\n    <li><strong>Altura das ondas:</strong> ${formatarNumero(alerta.wave_height_m, 'm')}</li>\n    <li><strong>Período das ondas:</strong> ${formatarNumero(alerta.wave_period_s, 's')}</li>\n  </ul>\n\n  <h3>Informação complementar</h3>\n  <p><strong>Aviso IPMA:</strong> ${escaparHTML(avisoIPMA)}</p>\n  <p><strong>Fonte:</strong> ${escaparHTML(alerta.source || 'Não disponível')}</p>\n  <p><strong>Alerta criado em:</strong> ${formatarData(alerta.created_at)}</p>\n\n  <hr>\n  <p style=\"font-size:12px;color:#666\">\n    Mensagem automática do projeto de monitorização marítima.\n    Os dados apresentados devem ser interpretados tendo em conta a respetiva fonte.\n  </p>\n</div>`;\n\nreturn msg;\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 180,
+        "y": 1920,
+        "wires": [
+            [
+                "0e8fdb20ebb45a29"
+            ]
+        ]
+    },
+    {
+        "id": "0e8fdb20ebb45a29",
+        "type": "delay",
+        "z": "4ab4cfe74fe488f7",
+        "name": "",
+        "pauseType": "rate",
+        "timeout": "5",
+        "timeoutUnits": "seconds",
+        "rate": "1",
+        "nbRateUnits": "1",
+        "rateUnits": "second",
+        "randomFirst": "1",
+        "randomLast": "5",
+        "randomUnits": "seconds",
+        "drop": false,
+        "allowrate": false,
+        "outputs": 1,
+        "x": 420,
+        "y": 1920,
+        "wires": [
+            [
+                "3df0469ec92f7048"
+            ]
+        ]
+    },
+    {
+        "id": "3df0469ec92f7048",
+        "type": "e-mail",
+        "z": "4ab4cfe74fe488f7",
+        "server": "costeiro-mail",
+        "port": "1025",
+        "authtype": "NONE",
+        "saslformat": true,
+        "token": "oauth2Response.access_token",
+        "secure": false,
+        "tls": false,
+        "name": "IPMA@upca.pt",
+        "dname": "IPMA UPCA",
+        "x": 670,
+        "y": 1920,
+        "wires": []
+    },
+    {
+        "id": "e2985368f5d17740",
+        "type": "function",
+        "z": "4ab4cfe74fe488f7",
+        "name": "Preparar atualização",
+        "func": "msg.params = [msg.alertId];\nmsg.query = `UPDATE alerts\n             SET email_sent = TRUE,\n                 email_sent_at = NOW(),\n                 last_error = NULL\n             WHERE id = $1\n               AND email_sent = FALSE\n               AND UPPER(TRIM(risk_level)) = 'ALTO'\n             RETURNING id, email_sent, email_sent_at;`;\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 420,
+        "y": 2120,
+        "wires": [
+            [
+                "56e5a8480be6e3b6"
+            ]
+        ]
+    },
+    {
+        "id": "56e5a8480be6e3b6",
+        "type": "postgresql",
+        "z": "4ab4cfe74fe488f7",
+        "name": "",
+        "query": "",
+        "postgreSQLConfig": "5db496b19976d9a2",
+        "split": false,
+        "rowsPerMsg": 1,
+        "outputs": 1,
+        "x": 630,
+        "y": 2040,
+        "wires": [
+            [
+                "41e008fc67fb6a76"
+            ]
+        ]
+    },
+    {
+        "id": "41e008fc67fb6a76",
+        "type": "debug",
+        "z": "4ab4cfe74fe488f7",
+        "name": "debug 1",
+        "active": true,
+        "tosidebar": true,
+        "console": true,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 870,
+        "y": 2040,
+        "wires": []
+    },
+    {
+        "id": "2734edde27252820",
+        "type": "catch",
+        "z": "4ab4cfe74fe488f7",
+        "name": "",
+        "scope": [
+            "3df0469ec92f7048"
+        ],
+        "uncaught": false,
+        "x": 140,
+        "y": 2000,
+        "wires": [
+            [
+                "8222133ee0f25e01"
+            ]
+        ]
+    },
+    {
+        "id": "0d9a391cd663ee6d",
+        "type": "complete",
+        "z": "4ab4cfe74fe488f7",
+        "name": "",
+        "scope": [
+            "3df0469ec92f7048"
+        ],
+        "uncaught": false,
+        "x": 150,
+        "y": 2080,
+        "wires": [
+            [
+                "e2985368f5d17740"
+            ]
+        ]
+    },
+    {
+        "id": "8222133ee0f25e01",
+        "type": "function",
+        "z": "4ab4cfe74fe488f7",
+        "name": "function 2",
+        "func": "const erro = (msg.error && msg.error.message) ? msg.error.message : 'erro desconhecido';\nmsg.params = [msg.alertId, erro.slice(0, 500)];\nmsg.query  = `UPDATE alerts\n              SET email_attempts = email_attempts + 1, last_error = $2\n              WHERE id = $1\n              RETURNING id, email_attempts, last_error;`;\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 360,
+        "y": 2000,
+        "wires": [
+            [
+                "56e5a8480be6e3b6"
+            ]
+        ]
+    },
+    {
+        "id": "5db496b19976d9a2",
+        "type": "postgreSQLConfig",
+        "name": "maritime",
+        "host": "costeiro-db",
+        "hostFieldType": "str",
+        "port": 5432,
+        "portFieldType": "num",
+        "database": "maritime",
+        "databaseFieldType": "str",
+        "ssl": "false",
+        "sslFieldType": "bool",
+        "applicationName": "",
+        "applicationNameType": "str",
+        "max": 10,
+        "maxFieldType": "num",
+        "idle": 1000,
+        "idleFieldType": "num",
+        "connectionTimeout": 10000,
+        "connectionTimeoutFieldType": "num",
+        "userFieldType": "cred",
+        "userEnv": "",
+        "passwordFieldType": "cred",
+        "passwordEnv": ""
+    },
+    {
+        "id": "c1b52e45eaadca6b",
+        "type": "global-config",
+        "env": [],
+        "modules": {
+            "node-red-contrib-postgresql": "0.16.2",
+            "node-red-node-email": "5.2.5"
+        }
+    }
+]

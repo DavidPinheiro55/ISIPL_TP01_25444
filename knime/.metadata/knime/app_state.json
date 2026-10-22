@@ -1,0 +1,22 @@
+{
+  "version" : "5.12.0.v202606180846",
+  "projects" : [ {
+    "name" : "Monitorizacao_Maritima",
+    "active" : true,
+    "origin" : {
+      "providerId" : "local",
+      "spaceId" : "local",
+      "relativePath" : "Monitorizacao_Maritima"
+    }
+  } ],
+  "mostRecentlyUsedProjects" : [ {
+    "name" : "Monitorizacao_Maritima",
+    "timeUsed" : "2026-10-21T20:45:48.4292303+01:00",
+    "origin" : {
+      "providerId" : "local",
+      "spaceId" : "local",
+      "projectType" : "WORKFLOW",
+      "relativePath" : "Monitorizacao_Maritima"
+    }
+  } ]
+}

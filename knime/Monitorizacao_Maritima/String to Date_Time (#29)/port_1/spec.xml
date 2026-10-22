@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config xmlns="http://www.knime.org/2008/09/XMLConfig" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.knime.org/2008/09/XMLConfig http://www.knime.org/XMLConfig_2008_09.xsd" key="spec.xml">
+    <entry key="spec_name" type="xstring" value="default"/>
+    <entry key="number_columns" type="xint" value="4"/>
+    <config key="column_spec_0">
+        <entry key="column_name" type="xstring" value="titulo"/>
+        <config key="element_names">
+            <entry key="array-size" type="xint" value="0"/>
+        </config>
+        <config key="column_type">
+            <entry key="cell_class" type="xstring" value="org.knime.core.data.def.StringCell"/>
+        </config>
+        <config key="column_domain">
+            <config key="possible_values">
+                <entry key="array-size" type="xint" value="5"/>
+                <config key="0">
+                    <entry key="datacell" type="xstring" value="org.knime.core.data.def.StringCell"/>
+                    <config key="org.knime.core.data.def.StringCell">
+                        <entry key="StringCell" type="xstring" value="Aviso de Sismo Sentido no Arquipélago dos Açores  22-10-2026  16:14"/>
+                    </config>
+                </config>
+                <config key="1">
+                    <entry key="datacell" type="xstring" value="org.knime.core.data.def.StringCell"/>
+                    <config key="org.knime.core.data.def.StringCell">
+                        <entry key="StringCell" type="xstring" value="Aviso de Sismo no Arquipélago dos Açores  21-10-2026  12:07"/>
+                    </config>
+                </config>
+                <config key="2">
+                    <entry key="datacell" type="xstring" value="org.knime.core.data.def.StringCell"/>
+                    <config key="org.knime.core.data.def.StringCell">
+                        <entry key="StringCell" type="xstring" value="Aviso de Sismo Sentido no Arquipélago dos Açores  20-10-2026  18:07"/>
+                    </config>
+                </config>
+                <config key="3">
+                    <entry key="datacell" type="xstring" value="org.knime.core.data.def.StringCell"/>
+                    <config key="org.knime.core.data.def.StringCell">
+                        <entry key="StringCell" type="xstring" value="Aviso de Sismo Sentido no Continente  15-10-2026  21:34"/>
+                    </config>
+                </config>
+                <config key="4">
+                    <entry key="datacell" type="xstring" value="org.knime.core.data.def.StringCell"/>
+                    <config key="org.knime.core.data.def.StringCell">
+                        <entry key="StringCell" type="xstring" value="Aviso de Sismo no Arquipélago dos Açores  03-10-2026  10:54"/>
+                    </config>
+                </config>
+            </config>
+        </config>
+        <config key="column_properties"/>
+        <config key="meta_data"/>
+    </config>
+    <config key="column_spec_1">
+        <entry key="column_name" type="xstring" value="ligacao"/>
+        <config key="element_names">
+            <entry key="array-size" type="xint" value="0"/>
+        </config>
+        <config key="column_type">
+            <entry key="cell_class" type="xstring" value="org.knime.core.data.def.StringCell"/>
+        </config>
+        <config key="column_domain">
+            <config key="possible_values">
+                <entry key="array-size" type="xint" value="1"/>
+                <config key="0">
+                    <entry key="datacell" type="xstring" value="org.knime.core.data.def.StringCell"/>
+                    <config key="org.knime.core.data.def.StringCell">
+                        <entry key="StringCell" type="xstring" value="https://www.ipma.pt/pt/geofisica/comunicados/"/>
+                    </config>
+                </config>
+            </config>
+        </config>
+        <config key="column_properties"/>
+        <config key="meta_data"/>
+    </config>
+    <config key="column_spec_2">
+        <entry key="column_name" type="xstring" value="data_publicacao"/>
+        <config key="element_names">
+            <entry key="array-size" type="xint" value="0"/>
+        </config>
+        <config key="column_type">
+            <entry key="cell_class" type="xstring" value="org.knime.core.data.time.localdatetime.LocalDateTimeCell"/>
+        </config>
+        <config key="column_domain">
+            <config key="lower_bound">
+                <entry key="datacell" type="xstring" value="org.knime.core.data.time.localdatetime.LocalDateTimeCell"/>
+                <entry key="datacell_serialized" type="xstring" value="rO0ABXNyADhvcmcua25pbWUuY29yZS5kYXRhLnRpbWUubG9jYWxkYXRldGltZS5Mb2NhbERhdGVUaW1lQ2VsbOuti+rRJjLvAgABTAAPbV9sb2NhbERhdGVUaW1ldAAZTGphdmEvdGltZS9Mb2NhbERhdGVUaW1lO3hyABxvcmcua25pbWUuY29yZS5kYXRhLkRhdGFDZWxsZunoiVaJsoACAAB4cHNyAA1qYXZhLnRpbWUuU2VylV2EuhsiSLIMAAB4cHcKBQAAB+oKAwsC+ng="/>
+            </config>
+            <config key="upper_bound">
+                <entry key="datacell" type="xstring" value="org.knime.core.data.time.localdatetime.LocalDateTimeCell"/>
+                <entry key="datacell_serialized" type="xstring" value="rO0ABXNyADhvcmcua25pbWUuY29yZS5kYXRhLnRpbWUubG9jYWxkYXRldGltZS5Mb2NhbERhdGVUaW1lQ2VsbOuti+rRJjLvAgABTAAPbV9sb2NhbERhdGVUaW1ldAAZTGphdmEvdGltZS9Mb2NhbERhdGVUaW1lO3hyABxvcmcua25pbWUuY29yZS5kYXRhLkRhdGFDZWxsZunoiVaJsoACAAB4cHNyAA1qYXZhLnRpbWUuU2VylV2EuhsiSLIMAAB4cHcKBQAAB+oKFhEL5Hg="/>
+            </config>
+        </config>
+        <config key="column_properties"/>
+        <config key="meta_data"/>
+    </config>
+    <config key="column_spec_3">
+        <entry key="column_name" type="xstring" value="descricao"/>
+        <config key="element_names">
+            <entry key="array-size" type="xint" value="0"/>
+        </config>
+        <config key="column_type">
+            <entry key="cell_class" type="xstring" value="org.knime.core.data.def.StringCell"/>
+        </config>
+        <config key="column_domain">
+            <config key="possible_values">
+                <entry key="array-size" type="xint" value="5"/>
+                <config key="0">
+                    <entry key="datacell" type="xstring" value="org.knime.core.data.def.StringCell"/>
+                    <config key="org.knime.core.data.def.StringCell">
+                        <entry key="StringCell" type="xstring" value=" Informação Sismológica Titulo: Aviso de Sismo Sentido no Arquipélago dos Açores 22-10-2026 16:14 O Instituto Português do Mar e da Atmosfera informa que no dia 22-10-2026 pelas 16:14 (hora local) foi registado nas estações da Rede Sísmica do Arquipélago dos Açores, um sismo de magnitude 4.3 (Richter) e cujo epicentro se localizou a cerca de 40 km a Oeste de Ginetes (S. Miguel). Este sismo, de acordo com a informação disponível até ao momento, não causou danos pessoais ou materiais e foi sentido com intensidade máxima III (escala de Mercalli modificada) na nas freguesias de Arrifes, Candelária, Mosteiros e Ponta Delgada (São Sebastião),São Miguel.Foi ainda sentido com menor intensidade nas freguesias de Nossa Senhora da Conceição, São Pedro e Praia da Vitória (Santa Cruz),Terceira. Se a situação o justificar serão emitidos novos comunicados. A localização do epicentro de um sismo é um processo físico e matemático complexo que depende do conjunto de dados, dos algoritmos e dos modelos de propagação das ondas sísmicas. Agências diferentes podem produzir resultados ligeiramente diferentes. Do mesmo modo, as determinações preliminares são habitualmente corrigidas posteriormente, pela integração de mais informação. Em todos os casos acompanhe sempre as indicações dos serviços de proteção civil. Toda e qualquer utilização do conteúdo deste comunicado deverá sempre fazer referência à fonte. Data de Edição: Qui, 22 Out 2026 17:11:27 "/>
+                    </config>
+                </config>
+                <config key="1">
+                    <entry key="datacell" type="xstring" value="org.knime.core.data.def.StringCell"/>
+                    <config key="org.knime.core.data.def.StringCell">
+                        <entry key="StringCell" type="xstring" value=" Informação Sismológica Titulo: Aviso de Sismo no Arquipélago dos Açores 21-10-2026 12:07 O Instituto Português do Mar e da Atmosfera informa que no dia 21-10-2026 pelas 12:07 (hora local) foi registado nas estações da Rede Sísmica do Arquipélago dos Açores, um sismo de magnitude 3.0 (Richter) e cujo epicentro se localizou a cerca de 14 km a Oeste-Noroeste dos Mosteiros (S. Miguel). Até à  elaboração deste comunicado não foi recebida nenhuma informação confirmando que este sismo tenha sido sentido. Se a situação o justificar serão emitidos novos comunicados. A localização do epicentro de um sismo é um processo físico e matemático complexo que depende do conjunto de dados, dos algoritmos e dos modelos de propagação das ondas sísmicas. Agências diferentes podem produzir resultados ligeiramente diferentes. Do mesmo modo, as determinações preliminares são habitualmente corrigidas posteriormente, pela integração de mais informação. Em todos os casos acompanhe sempre as indicações dos serviços de proteção civil. Toda e qualquer utilização do conteúdo deste comunicado deverá sempre fazer referência à fonte. Data de Edição: Qua, 21 Out 2026 12:16:30 "/>
+                    </config>
+                </config>
+                <config key="2">
+                    <entry key="datacell" type="xstring" value="org.knime.core.data.def.StringCell"/>
+                    <config key="org.knime.core.data.def.StringCell">
+                        <entry key="StringCell" type="xstring" value=" Informação Sismológica Titulo: Aviso de Sismo Sentido no Arquipélago dos Açores 20-10-2026 18:07 O Instituto Português do Mar e da Atmosfera informa que no dia 20-10-2026 pelas 18:07 (hora local) foi registado nas estações da Rede Sísmica do Arquipélago dos Açores, um sismo de magnitude 5.2 (Richter) e cujo epicentro se localizou a cerca de 40 km a Oeste de Ginetes (S. Miguel). Este sismo, de acordo com a informação disponível até ao momento, não causou danos pessoais ou materiais e foi sentido com intensidade máxima IV/V (escala de Mercalli modificada) nas freguesias de Fajã de Baixo, Mosteiros, Ponta Delgada (São Sebastião), Ponta Delgada (São José), Ponta Delgada (São Pedro), Relva, Rosto do Cão (Livramento), Rosto do Cão (São Roque), São Vicente Ferreira, Pilar da Bretanha, Santa Clara, Fenais da Ajuda, Rabo de Peixe, Ribeira Grande (Conceição) e Vila Franca do Campo (São Miguel) [São Miguel]. Foi ainda sentido com menor intensidade nas freguesias de Achadinha, Arrifes, Capelas, Covoada, Fajã de Cima, Fenais da Luz, Feteiras, Ginetes, Remédios, Santa Bárbara, Santo António, Faial da Terra, Furnas, Calhetas, Lomba da Maia, Maia, Pico da Pedra, Porto Formoso, Ribeira Grande (Matriz), Ribeira Seca, Ribeirinha, Água de Alto, Vila Franca do Campo (São Pedro) [São Miguel], Nossa Senhora da Conceição, Porto Judeu, Posto Santo, Vila de São Sebastião, Agualva, Lajes, Praia da Vitória (Santa Cruz), Vila Nova e Porto Martins [Terceira]. Se a situação o justificar serão emitidos novos comunicados. A localização do epicentro de um sismo é um processo físico e matemático complexo que depende do conjunto de dados, dos algoritmos e dos modelos de propagação das ondas sísmicas. Agências diferentes podem produzir resultados ligeiramente diferentes. Do mesmo modo, as determinações preliminares são habitualmente corrigidas posteriormente, pela integração de mais informação. Em todos os casos acompanhe sempre as indicações dos serviços de proteção civil. Toda e qualquer utilização do conteúdo deste comunicado deverá sempre fazer referência à fonte. Data de Edição: Ter, 20 Out 2026 20:33:04 "/>
+                    </config>
+                </config>
+                <config key="3">
+                    <entry key="datacell" type="xstring" value="org.knime.core.data.def.StringCell"/>
+                    <config key="org.knime.core.data.def.StringCell">
+                        <entry key="StringCell" type="xstring" value=" Informação Sismológica Titulo: Aviso de Sismo Sentido no Continente 15-10-2026 21:34 O Instituto Português do Mar e da Atmosfera informa que no dia 15-10-2026 pelas 21:34 (hora local) foi registado nas estações da Rede Sísmica do Continente, um sismo de magnitude 4.2 (Richter) e cujo epicentro se localizou a cerca de 10 km a Sul de Ponferrada (ESP). Este sismo, de acordo com a informação disponível até ao momento, não causou danos pessoais ou materiais e foi sentido com intensidade máxima II-III (escala de Mercalli modificada) na região de NE Bragança. Se a situação o justificar serão emitidos novos comunicados. A localização do epicentro de um sismo é um processo físico e matemático complexo que depende do conjunto de dados, dos algoritmos e dos modelos de propagação das ondas sísmicas. Agências diferentes podem produzir resultados ligeiramente diferentes. Do mesmo modo, as determinações preliminares são habitualmente corrigidas posteriormente, pela integração de mais informação. Em todos os casos acompanhe sempre as indicações dos serviços de proteção civil. Toda e qualquer utilização do conteúdo deste comunicado deverá sempre fazer referência à fonte. Data de Edição: Qui, 15 Out 2026 23:24:57 "/>
+                    </config>
+                </config>
+                <config key="4">
+                    <entry key="datacell" type="xstring" value="org.knime.core.data.def.StringCell"/>
+                    <config key="org.knime.core.data.def.StringCell">
+                        <entry key="StringCell" type="xstring" value=" Informação Sismológica Titulo: Aviso de Sismo no Arquipélago dos Açores 03-10-2026 10:54 O Instituto Português do Mar e da Atmosfera informa que no dia 03-10-2026 pelas 10:54 (hora local) foi registado nas estações da Rede Sísmica do Arquipélago dos Açores, um sismo de magnitude 3.5 (Richter) e cujo epicentro se localizou a cerca de 20 km a Sul-Sudoeste dos Ilhéus das Formigas (S. Miguel). Até à  elaboração deste comunicado não foi recebida nenhuma informação confirmando que este sismo tenha sido sentido. Se a situação o justificar serão emitidos novos comunicados. A localização do epicentro de um sismo é um processo físico e matemático complexo que depende do conjunto de dados, dos algoritmos e dos modelos de propagação das ondas sísmicas. Agências diferentes podem produzir resultados ligeiramente diferentes. Do mesmo modo, as determinações preliminares são habitualmente corrigidas posteriormente, pela integração de mais informação. Em todos os casos acompanhe sempre as indicações dos serviços de proteção civil. Toda e qualquer utilização do conteúdo deste comunicado deverá sempre fazer referência à fonte. Data de Edição: Sáb, 03 Out 2026 11:02:05 "/>
+                    </config>
+                </config>
+            </config>
+        </config>
+        <config key="column_properties"/>
+        <config key="meta_data"/>
+    </config>
+</config>

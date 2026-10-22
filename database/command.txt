@@ -1,0 +1,2 @@
+Get-Content .\database\costeiro_backup.sql -Raw |
+  docker exec -i costeiro-db psql -U admin -d maritime
