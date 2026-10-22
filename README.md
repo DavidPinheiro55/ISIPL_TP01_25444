@@ -1,399 +1,247 @@
-\# Monitorização de Condições Marítimas e Alertas para Atividades Costeiras
+#  Monitorização de Condições Marítimas e Alertas para Atividades Costeiras
 
+Projeto desenvolvido no âmbito da unidade curricular de **Integração de Sistemas de Informação**, com o objetivo de recolher, integrar e analisar dados marítimos e informação de risco costeiro.
 
+---
 
-\## 1. Identificação do projeto
+## 1. Identificação do projeto
 
-
-
-\- \*\*Autor:\*\* David Pinheiro
-
-\- \*\*Número de estudante:\*\* 25444
-
-\- \*\*Curso:\*\* Licenciatura Engenharia de Sistemas Informáticos
-
-\- \*\*Unidade curricular:\*\* Integração de Sistemas de Informação
-
-\- \*\*Ano letivo:\*\* 2026/2027
-
-
-
-\## 2. Descrição do projeto
-
-
-
-O projeto tem como objetivo desenvolver uma solução de integração de dados para a monitorização das condições marítimas e a identificação de situações de risco em zonas costeiras.
-
-
-
-A solução utiliza processos ETL (\*Extract, Transform, Load\*) para recolher dados de fontes externas, transformar e validar a informação e armazenar os resultados numa base de dados PostgreSQL.
-
-
-
-São utilizadas as seguintes fontes e ferramentas:
-
-
-
-\- \*\*Open-Meteo Marine API:\*\* recolha de dados marítimos, incluindo altura e período das ondas.
-
-\- \*\*IPMA:\*\* recolha de comunicados e informação relevante através de um feed RSS/XML.
-
-\- \*\*KNIME Analytics Platform:\*\* implementação dos workflows de integração, transformação e carregamento dos dados.
-
-\- \*\*PostgreSQL:\*\* armazenamento dos dados recolhidos, observações marítimas e alertas.
-
-\- \*\*Grafana:\*\* visualização dos dados através de dashboards.
-
-\- \*\*Docker Compose:\*\* execução dos serviços de suporte, incluindo PostgreSQL, Grafana e Mailpit.
-
-\- \*\*Mailpit:\*\* teste local do envio de mensagens de email, sem necessidade de enviar mensagens reais aos destinatários.
-
-
-
-A solução pretende facilitar a consulta das condições marítimas, identificar níveis de risco e disponibilizar informação útil para a monitorização costeira.
-
-
-
-\## 3. Estrutura dos ficheiros entregues
-
-
-
-A entrega está organizada nas seguintes pastas e ficheiros:
-
-
-
-| Pasta/Ficheiro | Descrição |
-
+| Elemento | Informação |
 |---|---|
+| **Autor** | David Pinheiro |
+| **Número de estudante** | 25444 |
+| **Curso** | Licenciatura em Engenharia de Sistemas Informáticos |
+| **Unidade curricular** | Integração de Sistemas de Informação |
+| **Ano letivo** | 2026/2027 |
 
-| `README.md` | Identificação do autor, descrição do projeto e instruções de execução. |
+## 2. Descrição do projeto
 
-| `doc/` | Relatório final do projeto em PDF. |
+O projeto consiste no desenvolvimento de uma solução de integração de dados para a monitorização das condições marítimas e a identificação de potenciais situações de risco em zonas costeiras.
 
-| `knime/` | Workflows KNIME exportados, responsáveis pelos processos de recolha, transformação e carregamento dos dados. |
+A solução utiliza processos ETL (*Extract, Transform, Load*) para recolher dados de fontes externas, transformar e validar a informação e armazenar os resultados numa base de dados PostgreSQL. Os dados são posteriormente disponibilizados para consulta e visualização através de dashboards.
 
-| `data/input/` | Ficheiros de entrada utilizados para testes ou processamento, quando aplicável. |
+### Fontes de dados e tecnologias utilizadas
 
-| `data/output/` | Ficheiros de saída gerados pelos processos, como CSV ou JSON, quando aplicável. |
+| Tecnologia | Finalidade |
+|---|---|
+| **Open-Meteo Marine API** | Recolha de dados marítimos, incluindo altura e período das ondas. |
+| **IPMA — RSS/XML** | Recolha e tratamento de comunicados publicados pelo IPMA. |
+| **KNIME Analytics Platform** | Implementação dos workflows de recolha, transformação e carregamento de dados. |
+| **PostgreSQL** | Armazenamento das observações marítimas, alertas e comunicados. |
+| **Grafana** | Visualização dos dados através de dashboards. |
+| **Docker Compose** | Execução e gestão dos serviços de suporte. |
+| **Mailpit** | Teste local do envio de emails associados aos alertas. |
 
-| `docker/` | Ficheiros de configuração necessários para executar os serviços através do Docker Compose. |
+O objetivo é disponibilizar informação organizada que permita acompanhar as condições marítimas, consultar os níveis de risco e verificar os alertas produzidos pelo sistema.
 
-| `sql/` | Scripts SQL para criar, configurar ou consultar as tabelas da base de dados. |
+## 3. Estrutura dos ficheiros entregues
 
+A entrega está organizada de acordo com a seguinte estrutura:
 
+```text
+tp01-25444/
+├── README.md
+├── docs/
+│   └── 25444_doc.pdf
+├── knime/
+│   └── workflows KNIME
+├── data/
+│   ├── input/
+│   └── output/
+├── database/
+│   └── costeiro_backup.sql
+├── node-red/
+│   └── flows.json
+├── sql/
+│   └── init.sql
+├── video/
+│   └── ISI_TP01_a25444.mp4
+├── grafana/
+│   └── Monitorização Marítima.json
+└── docker/
+    └── docker-compose.yml
+```
 
-Os workflows e os ficheiros de dados incluídos na entrega devem corresponder às versões finais utilizadas no projeto. Não são incluídas palavras-passe, tokens ou outras credenciais pessoais.
+| Pasta ou ficheiro | Descrição |
+|---|---|
+| `README.md` | Identificação, descrição e instruções de execução do projeto. |
+| `doc/` | Relatório final em formato PDF. |
+| `knime/` | Workflows KNIME utilizados nos processos de integração de dados. |
+| `data/input/` | Ficheiros de entrada utilizados, quando aplicável. |
+| `data/output/` | Exemplos de ficheiros gerados, como CSV ou JSON, quando aplicável. |
+| `database/` | Scripts SQL e consultas utilizados na base de dados. |
+| `grafana/` | Exportação JSON do dashboard, quando incluída. |
+| `docker/` | Configuração Docker Compose, caso o ficheiro esteja guardado nesta pasta. |
 
+A estrutura apresentada deve corresponder aos ficheiros efetivamente incluídos na entrega. Se o ficheiro `docker-compose.yml` estiver na raiz do projeto, as instruções de execução devem ser ajustadas à sua localização.
 
-
-\## 4. Ferramentas necessárias
-
-
+## 4. Requisitos de execução
 
 Para executar a solução, são necessárias as seguintes ferramentas:
 
+- **Docker Desktop**, com suporte para Docker Compose.
+- **KNIME Analytics Platform**, para abrir e executar os workflows.
+- **Navegador Web**, para aceder ao Grafana e ao Mailpit.
+- **Ligação à Internet**, para recolher informação das fontes externas.
+- **Ficheiros do projeto**, incluindo os workflows, a configuração Docker e os scripts SQL.
 
+## 5. Como executar a solução
 
-1\. \*\*Docker Desktop\*\*, com o Docker Compose disponível.
+### 5.1. Iniciar os serviços Docker
 
-2\. \*\*KNIME Analytics Platform\*\*, para abrir e executar os workflows.
+Abrir o PowerShell na pasta que contém o ficheiro `docker-compose.yml`.
 
-3\. \*\*Um navegador Web\*\*, para aceder ao Grafana e à interface do Mailpit.
-
-4\. \*\*Acesso à Internet\*\*, para recolher dados das fontes externas.
-
-5\. \*\*Os ficheiros do projeto\*\*, incluindo as configurações Docker, os scripts SQL e os workflows exportados.
-
-
-
-\## 5. Como executar a solução
-
-
-
-\### 5.1. Iniciar os serviços Docker
-
-
-
-Abrir um terminal, como o PowerShell, e navegar até à pasta do projeto.
-
-
+Executar:
 
 ```powershell
-
-cd "..\\TP1\\monitorizacao-maritima"
-
-```
-
-
-
-Entrar na pasta que contém o ficheiro `docker-compose.yml`. 
-
-
-
-```powershell
-
-cd docker
-
 docker compose up -d
-
-docker compose ps
-
 ```
 
-
-
-O último comando permite verificar o estado dos serviços.
-
-
-
-A configuração deverá disponibilizar os seguintes serviços:
-
-
-
-\- PostgreSQL: porta `5432`.
-
-\- Grafana: porta `3000`.
-
-\- Mailpit SMTP: porta `1025`.
-
-\- Interface Web do Mailpit: porta `8025`.
-
-
-
-Se o ficheiro Compose estiver noutra localização, os comandos devem ser ajustados à estrutura efetiva da entrega.
-
-
-
-\### 5.2. Confirmar o acesso à base de dados
-
-
-
-Com o serviço PostgreSQL em execução, é possível abrir uma sessão no terminal:
-
-
+Para verificar o estado dos serviços:
 
 ```powershell
+docker compose ps
+```
 
+O ambiente utiliza os seguintes serviços e portas:
+
+| Serviço | Porta | Finalidade |
+|---|---:|---|
+| PostgreSQL | `5432` | Base de dados. |
+| Grafana | `3000` | Visualização dos dados. |
+| Mailpit SMTP | `1025` | Receção local de emails de teste. |
+| Interface Web do Mailpit | `8025` | Consulta das mensagens recebidas. |
+
+Os nomes dos contentores e os parâmetros de ligação devem corresponder à configuração Docker utilizada.
+
+### 5.2. Aceder à base de dados PostgreSQL
+
+Com o contentor PostgreSQL em execução, abrir uma sessão através do PowerShell:
+
+```powershell
 docker exec -it costeiro-db psql -U admin -d maritime
-
 ```
 
-
-
-Para listar as tabelas existentes:
-
-
+Para listar as tabelas:
 
 ```sql
-
-\\dt
-
+\dt
 ```
 
-
-
-Para consultar algumas observações marítimas:
-
-
+Para consultar as observações marítimas mais recentes:
 
 ```sql
-
-SELECT \*
-
+SELECT *
 FROM public.observations
-
-ORDER BY observed\_at DESC
-
+ORDER BY observed_at DESC
 LIMIT 10;
-
 ```
-
-
 
 Para consultar os alertas registados:
 
-
-
 ```sql
-
-SELECT \*
-
+SELECT *
 FROM public.alerts
-
-ORDER BY created\_at DESC
-
+ORDER BY created_at DESC
 LIMIT 10;
-
 ```
 
+Para verificar a existência de alertas de risco elevado (`ALTO`):
 
+```sql
+SELECT COUNT(*) AS total_riscos_altos
+FROM public.alerts
+WHERE UPPER(TRIM(risk_level)) = 'ALTO';
+```
 
 Para sair da sessão PostgreSQL:
 
-
-
 ```sql
-
-\\q
-
+\q
 ```
 
+Se a base de dados ainda não estiver inicializada, devem ser executados os scripts SQL necessários, pela ordem adequada. Antes de restaurar um backup, deve ser utilizada uma base de dados de destino apropriada, evitando sobrescrever dados existentes.
 
+### 5.3. Executar os workflows no KNIME
 
-Se a base de dados ainda não estiver inicializada, devem ser executados os scripts SQL disponibilizados na pasta `sql/`, pela ordem indicada nesses ficheiros. Não devem ser eliminados volumes ou dados existentes durante a configuração.
+1. Abrir o KNIME Analytics Platform.
+2. Importar ou abrir os workflows incluídos na pasta `knime/`.
+3. Confirmar a configuração dos nós responsáveis pelos pedidos às APIs.
+4. Verificar a configuração da ligação à base de dados PostgreSQL.
+5. Executar os workflows, respeitando as dependências entre os processos.
+6. Verificar os resultados das transformações e o carregamento dos dados.
 
+Os workflows realizam a recolha, transformação e validação da informação proveniente das fontes externas e o respetivo carregamento nas tabelas configuradas.
 
+A execução depende da disponibilidade das fontes de dados e da configuração correta das ligações utilizadas.
 
-\### 5.3. Executar os workflows no KNIME
+### 5.4. Consultar o dashboard no Grafana
 
+Depois de iniciar os serviços Docker, abrir:
 
+**http://localhost:3000**
 
-1\. Abrir o KNIME Analytics Platform.
+Iniciar sessão com as credenciais configuradas localmente.
 
-2\. Importar ou abrir os workflows exportados que se encontram na pasta `knime/`.
+Se o dashboard for disponibilizado em formato JSON:
 
-3\. Confirmar a configuração dos nós de ligação às APIs e à base de dados.
+1. Aceder à secção de dashboards.
+2. Selecionar a opção de importação.
+3. Escolher o ficheiro JSON incluído na pasta `grafana/`.
+4. Configurar ou selecionar a fonte de dados PostgreSQL.
+5. Confirmar que as consultas correspondem às tabelas e colunas existentes.
+6. Guardar o dashboard e verificar os resultados apresentados.
 
-4\. Verificar se os endereços, credenciais e parâmetros de ligação correspondem ao ambiente local.
+O Grafana apresenta indicadores obtidos a partir da base de dados PostgreSQL através de consultas SQL. Os resultados dependem dos dados disponíveis e da configuração das consultas.
 
-5\. Executar os nós do workflow pela ordem necessária, desde a recolha dos dados até ao respetivo carregamento.
-
-6\. Verificar os resultados das transformações e confirmar que os dados foram inseridos ou atualizados na base de dados.
-
-
-
-Os workflows são responsáveis pela recolha dos dados das fontes externas, pela transformação e validação da informação e pelo carregamento dos resultados nas tabelas correspondentes.
-
-
-
-A execução deve respeitar as dependências entre os workflows, caso o processo esteja dividido em vários ficheiros.
-
-
-
-\### 5.4. Consultar o dashboard no Grafana
-
-
-
-Depois de iniciar os serviços Docker, abrir o navegador e aceder a:
-
-
-
-http://localhost:3000
-
-
-
-Iniciar sessão com as credenciais configuradas no Grafana.
-
-
-
-Se o dashboard for entregue em formato JSON:
-
-
-
-1\. Aceder à secção de dashboards.
-
-2\. Selecionar a opção de importação.
-
-3\. Escolher o ficheiro JSON disponibilizado na entrega.
-
-4\. Selecionar ou configurar a fonte de dados PostgreSQL.
-
-5\. Confirmar que as consultas utilizam as tabelas e colunas existentes na base de dados.
-
-6\. Guardar o dashboard e verificar os painéis apresentados.
-
-
-
-Os resultados apresentados dependem dos dados existentes na base de dados e da configuração das consultas.
-
-
-
-\### 5.5. Testar os emails através do Mailpit
-
-
+### 5.5. Testar o envio de emails através do Mailpit
 
 Com o serviço Mailpit em execução, abrir:
 
+**http://localhost:8025**
 
+Para os testes locais, a configuração SMTP utilizada pelo KNIME, quando executado no computador, é:
 
-http://localhost:8025
+| Parâmetro | Valor |
+|---|---|
+| Servidor SMTP | `localhost` |
+| Porta | `1025` |
+| Encriptação | Sem TLS, na configuração local padrão |
+| Autenticação | Conforme a configuração do serviço |
 
+Se o envio for realizado a partir de outro contentor Docker, deve ser utilizado o nome do serviço SMTP na rede Docker, em vez de assumir que `localhost` corresponde ao Mailpit.
 
+O Mailpit permite consultar as mensagens recebidas durante os testes sem as enviar para destinatários reais.
 
-Na configuração de envio de email, utilizar os parâmetros SMTP locais:
+## 6. Verificação dos resultados
 
+Após a execução dos workflows, devem ser verificadas as seguintes condições:
 
+- Os pedidos às fontes externas são executados corretamente.
+- Os dados são transformados para o formato esperado.
+- Os registos são armazenados nas tabelas PostgreSQL correspondentes.
+- Os níveis de risco e as mensagens de alerta são calculados de acordo com as regras configuradas.
+- O dashboard do Grafana apresenta os dados disponíveis na base de dados.
+- Quando aplicável, as mensagens de teste aparecem na interface do Mailpit.
 
-\- \*\*Servidor SMTP:\*\* `localhost` quando o envio é feito a partir do KNIME executado no computador.
+A ausência de registos ou de mensagens pode indicar que o workflow ainda não foi executado, que a fonte externa não disponibilizou dados ou que existe um problema de configuração.
 
-\- \*\*Porta:\*\* `1025`.
+## 7. Limitações e pressupostos
 
-\- \*\*Autenticação:\*\* de acordo com a configuração local do serviço.
+- A execução depende da disponibilidade das fontes externas e da ligação à Internet.
+- Os resultados apresentados dependem dos dados recolhidos e da data da última execução dos workflows.
+- Os dados de teste não devem ser interpretados como uma confirmação das condições marítimas em tempo real.
+- O Mailpit é utilizado para testes locais de email, salvo se existir uma configuração adicional de envio através de um servidor SMTP real.
+- As credenciais e os parâmetros de ligação podem ter de ser ajustados ao ambiente onde o projeto é executado.
 
-\- \*\*Encriptação:\*\* sem TLS para o teste local padrão.
+## 8. Relatório e demonstração
 
+O relatório final encontra-se na pasta `docs/`.
 
+**Vídeo de demonstração:** [[Vídeo de Demonstração](https://alunosipca-my.sharepoint.com/personal/a25444_alunos_ipca_pt/_layouts/15/stream.aspx?id=%2Fpersonal%2Fa25444%5Falunos%5Fipca%5Fpt%2FDocuments%2FISI%5FTP01%5Fa25444%2Emp4&nav=eyJyZWZlcnJhbEluZm8iOnsicmVmZXJyYWxBcHAiOiJPbmVEcml2ZUZvckJ1c2luZXNzIiwicmVmZXJyYWxBcHBQbGF0Zm9ybSI6IldlYiIsInJlZmVycmFsTW9kZSI6InZpZXciLCJyZWZlcnJhbFZpZXciOiJNeUZpbGVzTGlua0NvcHkifX0&ga=1&referrer=StreamWebApp%2EWeb&referrerScenario=AddressBarCopied%2Eview%2Ecfad1942%2Dc7aa%2D48bb%2D93e8%2Da2b713eac24b)]
 
-Se o envio for efetuado a partir de outro contentor Docker, o endereço do servidor SMTP deverá corresponder ao nome do serviço na rede Docker, e não necessariamente a `localhost`.
+O vídeo apresenta a execução e os principais componentes da solução desenvolvida.
 
+---
 
-
-O Mailpit permite verificar as mensagens geradas durante os testes sem as enviar para destinatários reais. O envio deve ser testado depois de o mecanismo de alertas estar configurado.
-
-
-
-\## 6. Verificação dos resultados
-
-
-
-Após executar os workflows, devem ser efetuadas as seguintes verificações:
-
-
-
-\- Confirmar que os pedidos às fontes externas foram concluídos com sucesso.
-
-\- Verificar se os dados foram transformados para o formato esperado.
-
-\- Confirmar a existência de registos nas tabelas PostgreSQL utilizadas.
-
-\- Verificar se os níveis de risco e as mensagens de alerta foram calculados corretamente.
-
-\- Confirmar que o Grafana apresenta os dados existentes na base de dados.
-
-\- Quando aplicável, confirmar que os emails de teste aparecem na interface do Mailpit.
-
-
-
-A ausência de registos ou de mensagens pode indicar que o workflow ainda não foi executado, que a fonte externa não disponibilizou dados ou que existe algum problema de configuração.
-
-
-
-\## 7. Limitações e pressupostos
-
-
-
-A execução depende da disponibilidade das fontes externas, da configuração correta dos serviços Docker e das ligações do KNIME à base de dados.
-
-
-
-Os dados apresentados durante os testes podem não representar as condições marítimas em tempo real no momento da consulta.
-
-
-
-As mensagens de email são testadas localmente através do Mailpit, salvo se existir uma configuração adicional de envio para um servidor SMTP real.
-
-
-
-\## 8. Relatório e demonstração
-
-
-
-O relatório final encontra-se na pasta `doc/`.
-
-
-
-\*\*Vídeo de demonstração:\*\* \[[Video Demonstração](https://alunosipca-my.sharepoint.com/personal/a25444_alunos_ipca_pt/_layouts/15/stream.aspx?id=%2Fpersonal%2Fa25444%5Falunos%5Fipca%5Fpt%2FDocuments%2FISI%5FTP01%5Fa25444%2Emp4&nav=eyJyZWZlcnJhbEluZm8iOnsicmVmZXJyYWxBcHAiOiJPbmVEcml2ZUZvckJ1c2luZXNzIiwicmVmZXJyYWxBcHBQbGF0Zm9ybSI6IldlYiIsInJlZmVycmFsTW9kZSI6InZpZXciLCJyZWZlcnJhbFZpZXciOiJNeUZpbGVzTGlua0NvcHkifX0&ga=1&referrer=StreamWebApp%2EWeb&referrerScenario=AddressBarCopied%2Eview%2Ecfad1942%2Dc7aa%2D48bb%2D93e8%2Da2b713eac24b)].
-
-
-
-
+**Projeto 01 — Integração de Sistemas de Informação | 2026/2027**
